@@ -4,7 +4,8 @@ option java_multiple_files = true;
 option java_package = "billing";
 
 service BillingServiceGrpc {
-    rpc createBill (BillRequest) returns (BillResponse);
+    rpc createBill(BillRequest) returns (BillResponse);
+    rpc getBillByPatientId(GetBillByPatientIdRequest) returns (BillResponse);
 }
 
 message BillRequest {
@@ -13,6 +14,10 @@ message BillRequest {
     double amount = 3;
     string billDate = 4;
     bool paid = 5;
+}
+
+message GetBillByPatientIdRequest {
+    int64 patientId = 1;
 }
 
 message BillResponse {

@@ -3,6 +3,7 @@ package com.pm.billingservice.service.grpc;
 import billing.BillRequest;
 import billing.BillResponse;
 import billing.BillingServiceGrpcGrpc;
+import billing.GetBillByPatientIdRequest;
 import com.pm.billingservice.model.Bill;
 import com.pm.billingservice.service.BillingService;
 import io.grpc.stub.StreamObserver;
@@ -39,5 +40,12 @@ public class BillingGrpcService extends BillingServiceGrpcGrpc.BillingServiceGrp
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getBillByPatientId(GetBillByPatientIdRequest request, StreamObserver<BillResponse> responseObserver) {
+        Long patientId = request.getPatientId();
+//        Bill bill = billingService.getBillsByPatientId(patientId);
+        
     }
 }
