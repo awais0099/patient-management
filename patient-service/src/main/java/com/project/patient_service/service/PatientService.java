@@ -4,20 +4,30 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.patient_service.dto.PatientRequestDTO;
 import com.project.patient_service.dto.PatientResponseDTO;
 import com.project.patient_service.exception.EmailAlreadyExistsException;
 import com.project.patient_service.exception.PatientNotFoundException;
+import com.project.patient_service.kafka.KafkaProducerService;
 import com.project.patient_service.mapper.PatientMapper;
 import com.project.patient_service.model.Patient;
 import com.project.patient_service.repository.PatientRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PatientService {
-
+    private static Logger LOGGER = LoggerFactory.getLogger(PatientService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final PatientRepository patientRepository;
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
+
 
     public PatientService(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
@@ -58,7 +68,10 @@ public class PatientService {
 
     @Transactional
     public Patient savePatient(Patient patient) {
-        return patientRepository.save(patient);
+        Patient savedPatient = patientRepository.save(patient);
+        LOGGER.info("Patient saved: {}", savedPatient);
+        kafkaProducerService.sendMessage("patient-topic", "Patient saved: " + savedPatient.getId());
+        return savedPatient;
     }
 
     /**

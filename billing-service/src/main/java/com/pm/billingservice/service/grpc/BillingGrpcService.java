@@ -46,6 +46,6 @@ public class BillingGrpcService extends BillingServiceGrpcGrpc.BillingServiceGrp
     public void getBillByPatientId(GetBillByPatientIdRequest request, StreamObserver<BillResponse> responseObserver) {
         Long patientId = request.getPatientId();
 //        Bill bill = billingService.getBillsByPatientId(patientId);
-        
+
     }
 }
