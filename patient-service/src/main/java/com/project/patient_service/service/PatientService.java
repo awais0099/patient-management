@@ -70,7 +70,7 @@ public class PatientService {
     public Patient savePatient(Patient patient) {
         Patient savedPatient = patientRepository.save(patient);
         LOGGER.info("Patient saved: {}", savedPatient);
-        kafkaProducerService.sendMessage("patient-topic", "Patient saved: " + savedPatient.getId());
+        kafkaProducerService.sendMessage("patient-topic", savedPatient);
         return savedPatient;
     }
 

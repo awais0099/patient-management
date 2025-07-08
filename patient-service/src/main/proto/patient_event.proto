@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package patient.events;
+option java_multiple_files = true;
+
+message PatientEvent {
+    int64 id = 1;
+    string name = 2;
+    string email = 3;
+    string address = 4;
+    string dateOfBirth = 5;
+    string registeredDate = 6;
+    string event_type = 7;
+}
