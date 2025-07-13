@@ -19,3 +19,9 @@ spring:
               uri: http://localhost:4001
               predicates:
                 - Path=/api/bills/**
+            - id: auth-service-route
+              uri: http://localhost:4008
+              predicates:
+                - Path=/auth/**
+              filters:
+                  - StripPrefix=1
