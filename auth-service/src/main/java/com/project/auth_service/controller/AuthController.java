@@ -3,6 +3,7 @@ package com.project.auth_service.controller;
 import com.project.auth_service.dto.LoginRequestDTO;
 import com.project.auth_service.dto.LoginResponseDTO;
 import com.project.auth_service.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
+    @Operation(summary = "Generate token on user login")
     public ResponseEntity<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO loginRequestDTO) {
 
@@ -31,6 +33,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate")
+    @Operation(summary = "Validate Token")
     public ResponseEntity<Void> validateToken(
             @RequestHeader("Authorization") String authHeader) {
 
