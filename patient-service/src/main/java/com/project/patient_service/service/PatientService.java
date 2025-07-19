@@ -14,14 +14,15 @@ import com.project.patient_service.mapper.PatientMapper;
 import com.project.patient_service.model.Patient;
 import com.project.patient_service.repository.PatientRepository;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PatientService {
-    private static Logger LOGGER = LoggerFactory.getLogger(PatientService.class);
+    private static Logger LOGGER = LogManager.getLogger(PatientService.class);
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final PatientRepository patientRepository;
 
@@ -39,6 +40,8 @@ public class PatientService {
      * @return a list of PatientResponseDTOs representing all patients.
      */
     public List<PatientResponseDTO> getPatients() {
+        LOGGER.info("Retrieving all patients from the repository");
+
         List<Patient> patients = patientRepository.findAll();
         List<PatientResponseDTO> patientResponseDTOs = patients.stream()
                 .map(patient -> PatientMapper.toDTO(patient))
@@ -50,10 +53,12 @@ public class PatientService {
     /**
      * Retrieves a patient by ID and maps it to a DTO.
      *
-     * @param id the UUID of the patient to retrieve.
+     * @param patientRequestDTO the UUID of the patient to retrieve.
      * @return a PatientResponseDTO representing the patient.
      */
     public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) {
+        LOGGER.info("Creating a new patient with email: {}", patientRequestDTO.getEmail());
+
         if (patientRepository.existsByEmail(patientRequestDTO.getEmail())) {
             throw new EmailAlreadyExistsException(
                     "A patient with this email " + "already exists"
@@ -68,6 +73,8 @@ public class PatientService {
 
     @Transactional
     public Patient savePatient(Patient patient) {
+        LOGGER.info("Saving patient: {}", patient);
+
         Patient savedPatient = patientRepository.save(patient);
         LOGGER.info("Patient saved: {}", savedPatient);
         kafkaProducerService.sendMessage("patient-topic", savedPatient);
@@ -82,6 +89,8 @@ public class PatientService {
      * @return a PatientResponseDTO representing the updated patient.
      */
     public PatientResponseDTO updatePatient(Long id, PatientRequestDTO patientRequestDTO) {
+        LOGGER.info("Updating patient with ID: {}", id);
+
         Patient patient = patientRepository.findById(id).orElseThrow(
                 () -> new PatientNotFoundException("Patient not found with ID: " + id));
 
@@ -107,6 +116,8 @@ public class PatientService {
      * @param id the UUID of the patient to delete.
      */
     public void deletePatient(Long id) {
+        LOGGER.info("Deleting patient with ID: {}", id);
+
         if (!patientRepository.existsById(id)) {
             throw new PatientNotFoundException("Patient not found with ID: " + id);
         }
@@ -120,6 +131,7 @@ public class PatientService {
      * @return a PatientResponseDTO representing the patient.
      */
     public Optional<Patient> getPatientById(Long id) {
+        LOGGER.info("Retrieving patient with ID: {}", id);
         return patientRepository.findById(id);
     }
 }

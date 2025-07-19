@@ -5,15 +5,15 @@ import billing.BillResponse;
 import billing.BillingServiceGrpcGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BillingGrpcClient {
-    private static final Logger log = LoggerFactory.getLogger(
-            BillingGrpcClient.class);
+    private static final Logger log = LogManager.getLogger(BillingGrpcClient.class);
+
     private final BillingServiceGrpcGrpc.BillingServiceGrpcBlockingStub blockingStub;
 
     public BillingGrpcClient(@Value("${grpc.billing.service.host}") String grpcServerHost,
